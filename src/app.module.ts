@@ -5,6 +5,7 @@ import { AccountsModule } from './accounts/accounts.module';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -19,6 +20,7 @@ import { LoggerMiddleware } from './common/middleware/logger.middleware';
         limit: 10,
       },
     ]),
+    PrismaModule,
     UsersModule,
     AccountsModule,
     CategoriesModule,
