@@ -1,10 +1,10 @@
-# FinTrack API 🪙
+# FinTrack API 
 
 FinTrack API is a robust, production-ready backend application built with NestJS, TypeScript, PostgreSQL, and Prisma ORM. It enables users to manage personal financial accounts (cash, bank accounts, e-wallets), track income and expense transactions, organize categories, and maintain accurate financial balances with security features including JWT authentication, RBAC, rate limiting, and global request logging.
 
 ---
 
-## 📐 Entity-Relationship Diagram (ERD)
+##  Entity-Relationship Diagram (ERD)
 
 ![FinTrack ERD](docs/erd.png)
 
@@ -16,7 +16,7 @@ FinTrack API is a robust, production-ready backend application built with NestJS
 
 ---
 
-## 🚀 Setup & Local Execution Instructions
+##  Setup & Local Execution Instructions
 
 ### Prerequisites
 - **Node.js**: v18+
@@ -67,7 +67,7 @@ The API server will listen on `http://localhost:3000`.
 
 ---
 
-## 🏗️ Architecture & Technical Design
+##  Architecture & Technical Design
 
 ### Custom Provider & Testability (`BalanceCalculatorProvider`)
 Balance calculation for transactions is decoupled from service business logic into a custom provider: `BalanceCalculatorService` (registered via `BALANCE_CALCULATOR_TOKEN`). 
@@ -89,7 +89,7 @@ Balance calculation for transactions is decoupled from service business logic in
 
 ---
 
-## 📄 API Documentation & Postman Collection
+##  API Documentation & Postman Collection
 
 - **Smoke Test Documentation**: Detailed curl commands, request bodies, and success/error responses can be found in [`docs/api-smoke-test.md`](file:///Users/alexander/Documents/Programing/revouFeb/BACKEND/assigmnet/milestone-4-DESIGNandDEMOLISH/docs/api-smoke-test.md).
 - **Postman Collection**: A complete Postman collection is exported to [`docs/fintrack.postman_collection.json`](file:///Users/alexander/Documents/Programing/revouFeb/BACKEND/assigmnet/milestone-4-DESIGNandDEMOLISH/docs/fintrack.postman_collection.json). It includes:
@@ -99,7 +99,7 @@ Balance calculation for transactions is decoupled from service business logic in
 
 ---
 
-## 📌 Known Limitations & Future Enhancements
+##  Known Limitations & Future Enhancements
 
 - **Transfer Transactions**: Future updates will add explicit cross-account transfer transactions that atomically update both origin and destination account balances.
 - **Pagination & Analytics**: Future releases will add page-based pagination for transactions and aggregated summary endpoints (e.g. monthly category spending reports).
