@@ -15,7 +15,7 @@ enum UserRole {
 enum AccountType {
   cash
   bank
-  e_wallet
+  e_wallet @map("e-wallet")
 }
 
 enum CategoryType {
@@ -66,14 +66,14 @@ model Category {
 model Transaction {
   id              String          @id @default(uuid())
   accountId       String          @map("account_id")
-  categoryId      String          @map("category_id")
+  categoryId      String?         @map("category_id")
   type            TransactionType
   amount          Decimal         @db.Decimal(12, 2)
   description     String?
   transactionDate DateTime        @map("transaction_date")
   createdAt       DateTime        @default(now()) @map("created_at")
   account         Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  category        Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  category        Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
   @@map("transactions")
 }

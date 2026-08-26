@@ -1,0 +1,1030 @@
+{
+	"info": {
+		"_postman_id": "fintrack-api-collection-v1",
+		"name": "FinTrack API",
+		"description": "Complete Postman collection for FinTrack API covering Auth, Users, Accounts, Categories, and Transactions with success, validation-error, and 403 authorization error examples.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User (Success)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Alice Johnson\",\n  \"email\": \"alice_new@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"a1b2c3d4-e5f6-7890-1234-56789abcdef0\",\n  \"name\": \"Alice Johnson\",\n  \"email\": \"alice_new@example.com\",\n  \"role\": \"USER\",\n  \"createdAt\": \"2026-08-26T22:00:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Register User (Validation Error)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"\",\n  \"email\": \"invalid-email\",\n  \"password\": \"123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": [\n    \"email must be an email\",\n    \"password must be longer than or equal to 6 characters\",\n    \"name should not be empty\"\n  ],\n  \"error\": \"Bad Request\",\n  \"statusCode\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "Login (Success)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.access_token) {",
+									"    pm.collectionVariables.set('token', jsonData.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"hashedpassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created (Token issued)",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "List Users (Success)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "[\n  {\n    \"id\": \"user-id-1\",\n    \"name\": \"Alice Johnson\",\n    \"email\": \"alice@example.com\",\n    \"role\": \"USER\",\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Create User via POST /users (Success)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"David Miller\",\n  \"email\": \"david@example.com\",\n  \"password\": \"securePass123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"user-id-david\",\n  \"name\": \"David Miller\",\n  \"email\": \"david@example.com\",\n  \"role\": \"USER\",\n  \"createdAt\": \"2026-08-26T22:15:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create User (Validation Error)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"David\",\n  \"email\": \"not-an-email\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": [\n    \"email must be an email\",\n    \"password must be longer than or equal to 6 characters\",\n    \"password must be a string\"\n  ],\n  \"error\": \"Bad Request\",\n  \"statusCode\": 400\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Accounts",
+			"item": [
+				{
+					"name": "Create Account (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Emergency Fund\",\n  \"type\": \"bank\",\n  \"balance\": 1000.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"account-uuid-1\",\n  \"userId\": \"alice-user-id\",\n  \"name\": \"Emergency Fund\",\n  \"type\": \"bank\",\n  \"balance\": \"1000.00\",\n  \"createdAt\": \"2026-08-26T22:20:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Account (Validation Error)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Invalid Account\",\n  \"type\": \"crypto_wallet\",\n  \"balance\": -50.00\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": [\n    \"type must be one of the following values: cash, bank, e_wallet\",\n    \"balance must be a positive number\"\n  ],\n  \"error\": \"Bad Request\",\n  \"statusCode\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "List User Accounts (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/accounts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "[\n  {\n    \"id\": \"account-uuid-1\",\n    \"userId\": \"alice-user-id\",\n    \"name\": \"Alice Main Checking\",\n    \"type\": \"bank\",\n    \"balance\": \"2500.00\",\n    \"createdAt\": \"2026-01-01T00:00:00.000Z\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Account by ID (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/accounts/account-uuid-1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accounts",
+								"account-uuid-1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"account-uuid-1\",\n  \"userId\": \"alice-user-id\",\n  \"name\": \"Alice Main Checking\",\n  \"type\": \"bank\",\n  \"balance\": \"2500.00\",\n  \"createdAt\": \"2026-01-01T00:00:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Account (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Alice Primary Bank Account\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/accounts/account-uuid-1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accounts",
+								"account-uuid-1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"account-uuid-1\",\n  \"userId\": \"alice-user-id\",\n  \"name\": \"Alice Primary Bank Account\",\n  \"type\": \"bank\",\n  \"balance\": \"2500.00\",\n  \"createdAt\": \"2026-01-01T00:00:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Account (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/accounts/account-uuid-1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"accounts",
+								"account-uuid-1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"account-uuid-1\",\n  \"userId\": \"alice-user-id\",\n  \"name\": \"Alice Primary Bank Account\",\n  \"type\": \"bank\",\n  \"balance\": \"2500.00\",\n  \"createdAt\": \"2026-01-01T00:00:00.000Z\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Create Category (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Investment\",\n  \"type\": \"income\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"cat-uuid-investment\",\n  \"name\": \"Investment\",\n  \"type\": \"income\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Category (Validation Error)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"\",\n  \"type\": \"invalid_type\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": [\n    \"name should not be empty\",\n    \"type must be one of the following values: income, expense\"\n  ],\n  \"error\": \"Bad Request\",\n  \"statusCode\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "List Categories (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "[\n  {\n    \"id\": \"cat-uuid-salary\",\n    \"name\": \"Salary\",\n    \"type\": \"income\"\n  },\n  {\n    \"id\": \"cat-uuid-groceries\",\n    \"name\": \"Groceries\",\n    \"type\": \"expense\"\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Delete Category - Non-Admin (403 Forbidden)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/cat-uuid-groceries",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"cat-uuid-groceries"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "403 Forbidden (RBAC Admin Required)",
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": \"You do not have permission to access this resource\",\n  \"error\": \"Forbidden\",\n  \"statusCode\": 403\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Create Transaction (Success + Relational Return)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"account_id\": \"account-uuid-1\",\n  \"category_id\": \"cat-uuid-groceries\",\n  \"type\": \"expense\",\n  \"amount\": 85.50,\n  \"description\": \"Supermarket run\",\n  \"transaction_date\": \"2026-08-26T00:00:00.000Z\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Created",
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"tx-uuid-1\",\n  \"accountId\": \"account-uuid-1\",\n  \"categoryId\": \"cat-uuid-groceries\",\n  \"type\": \"expense\",\n  \"amount\": \"85.50\",\n  \"description\": \"Supermarket run\",\n  \"transactionDate\": \"2026-08-26T00:00:00.000Z\",\n  \"createdAt\": \"2026-08-26T22:25:00.000Z\",\n  \"category\": {\n    \"id\": \"cat-uuid-groceries\",\n    \"name\": \"Groceries\",\n    \"type\": \"expense\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Transaction (Validation Error)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"account_id\": \"account-uuid-1\",\n  \"type\": \"invalid_type\",\n  \"amount\": -100,\n  \"transaction_date\": \"2026-99-99\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 Bad Request",
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"message\": [\n    \"type must be one of the following values: income, expense, transfer\",\n    \"amount must be a positive number\",\n    \"transaction_date must be a valid ISO 8601 date string\"\n  ],\n  \"error\": \"Bad Request\",\n  \"statusCode\": 400\n}"
+						}
+					]
+				},
+				{
+					"name": "List User Transactions (Success - Relational query with include)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "[\n  {\n    \"id\": \"tx-uuid-1\",\n    \"accountId\": \"account-uuid-1\",\n    \"categoryId\": \"cat-uuid-groceries\",\n    \"type\": \"expense\",\n    \"amount\": \"85.50\",\n    \"description\": \"Supermarket run\",\n    \"transactionDate\": \"2026-08-26T00:00:00.000Z\",\n    \"createdAt\": \"2026-08-26T22:25:00.000Z\",\n    \"category\": {\n      \"id\": \"cat-uuid-groceries\",\n      \"name\": \"Groceries\",\n      \"type\": \"expense\"\n    },\n    \"account\": {\n      \"id\": \"account-uuid-1\",\n      \"name\": \"Alice Main Checking\"\n    }\n  }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Transaction by ID (Success)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions/tx-uuid-1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"tx-uuid-1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"tx-uuid-1\",\n  \"accountId\": \"account-uuid-1\",\n  \"categoryId\": \"cat-uuid-groceries\",\n  \"type\": \"expense\",\n  \"amount\": \"85.50\",\n  \"description\": \"Supermarket run\",\n  \"transactionDate\": \"2026-08-26T00:00:00.000Z\",\n  \"createdAt\": \"2026-08-26T22:25:00.000Z\",\n  \"category\": {\n    \"id\": \"cat-uuid-groceries\",\n    \"name\": \"Groceries\",\n    \"type\": \"expense\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Transaction (Success - Triggers balance recalculation)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 95.00,\n  \"description\": \"Updated supermarket run\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/transactions/tx-uuid-1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"tx-uuid-1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"tx-uuid-1\",\n  \"accountId\": \"account-uuid-1\",\n  \"categoryId\": \"cat-uuid-groceries\",\n  \"type\": \"expense\",\n  \"amount\": \"95.00\",\n  \"description\": \"Updated supermarket run\",\n  \"transactionDate\": \"2026-08-26T00:00:00.000Z\",\n  \"createdAt\": \"2026-08-26T22:25:00.000Z\",\n  \"category\": {\n    \"id\": \"cat-uuid-groceries\",\n    \"name\": \"Groceries\",\n    \"type\": \"expense\"\n  }\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Transaction (Success - Restores account balance)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/transactions/tx-uuid-1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"transactions",
+								"tx-uuid-1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 OK",
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								}
+							],
+							"body": "{\n  \"id\": \"tx-uuid-1\",\n  \"accountId\": \"account-uuid-1\",\n  \"categoryId\": \"cat-uuid-groceries\",\n  \"type\": \"expense\",\n  \"amount\": \"95.00\",\n  \"description\": \"Updated supermarket run\",\n  \"transactionDate\": \"2026-08-26T00:00:00.000Z\",\n  \"createdAt\": \"2026-08-26T22:25:00.000Z\"\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}

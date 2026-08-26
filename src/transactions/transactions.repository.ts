@@ -1,34 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/create-transaction.dto';
+import { TransactionType } from '@prisma/client';
+
+interface MockTransaction {
+  id: string;
+  account_id: string;
+  category_id?: string;
+  type: TransactionType;
+  amount: number;
+  description?: string;
+  transaction_date: string;
+  created_at: string;
+}
 
 @Injectable()
 export class TransactionsRepository {
-  private mockTransactions: Array<{
-    id: number;
-    account_id: number;
-    category_id?: number;
-    type: string;
-    amount: number;
-    description?: string;
-    transaction_date: string;
-    created_at: string;
-  }> = [
+  private mockTransactions: MockTransaction[] = [
     {
-      id: 1,
-      account_id: 1,
-      category_id: 1,
-      type: 'income',
+      id: '1',
+      account_id: '1',
+      category_id: '1',
+      type: TransactionType.income,
       amount: 3000.0,
       description: 'Monthly Salary',
       transaction_date: '2026-01-01',
       created_at: new Date().toISOString(),
     },
     {
-      id: 2,
-      account_id: 1,
-      category_id: 2,
-      type: 'expense',
+      id: '2',
+      account_id: '1',
+      category_id: '2',
+      type: TransactionType.expense,
       amount: 150.0,
       description: 'Weekly Grocery Supermarket',
       transaction_date: '2026-01-03',
@@ -39,7 +42,7 @@ export class TransactionsRepository {
 
   create(createTransactionDto: CreateTransactionDto) {
     const newTransaction = {
-      id: this.idCounter++,
+      id: String(this.idCounter++),
       ...createTransactionDto,
       created_at: new Date().toISOString(),
     };
@@ -51,11 +54,11 @@ export class TransactionsRepository {
     return this.mockTransactions;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return this.mockTransactions.find((t) => t.id === id);
   }
 
-  update(id: number, updateTransactionDto: UpdateTransactionDto) {
+  update(id: string, updateTransactionDto: UpdateTransactionDto) {
     const index = this.mockTransactions.findIndex((t) => t.id === id);
     if (index === -1) return null;
     this.mockTransactions[index] = {
@@ -65,7 +68,7 @@ export class TransactionsRepository {
     return this.mockTransactions[index];
   }
 
-  remove(id: number) {
+  remove(id: string) {
     const index = this.mockTransactions.findIndex((t) => t.id === id);
     if (index === -1) return null;
     const removedTransaction = this.mockTransactions[index];

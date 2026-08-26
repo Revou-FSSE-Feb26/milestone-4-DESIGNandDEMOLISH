@@ -6,17 +6,9 @@ import {
   IsPositive,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
-
-export enum AccountType {
-  CASH = 'cash',
-  BANK = 'bank',
-  E_WALLET = 'e-wallet',
-}
+import { AccountType } from '@prisma/client';
 
 export class CreateAccountDto {
-  @IsString()
-  user_id: string;
-
   @IsString()
   name: string;
 

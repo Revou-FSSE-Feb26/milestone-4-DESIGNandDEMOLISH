@@ -1,20 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
-import { AccountType } from '@prisma/client';
+import { CreateAccountDto, UpdateAccountDto } from './dto/create-account.dto';
 
 @Injectable()
 export class AccountsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createAccountDto: {
-    userId: string;
-    name: string;
-    type: AccountType;
-    balance?: number;
-  }) {
+  async create(createAccountDto: CreateAccountDto, userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID #${userId} not found`);
+    }
     return this.prisma.account.create({
       data: {
-        userId: createAccountDto.userId,
+        userId,
         name: createAccountDto.name,
         type: createAccountDto.type,
         balance: createAccountDto.balance ?? 0.0,
@@ -22,8 +23,10 @@ export class AccountsService {
     });
   }
 
-  async findAll() {
-    return this.prisma.account.findMany();
+  async findAll(userId: string) {
+    return this.prisma.account.findMany({
+      where: { userId },
+    });
   }
 
   async findOne(id: string) {
@@ -36,14 +39,17 @@ export class AccountsService {
     return account;
   }
 
-  async update(
-    id: string,
-    updateAccountDto: { name?: string; type?: AccountType; balance?: number },
-  ) {
+  async update(id: string, updateAccountDto: UpdateAccountDto) {
     await this.findOne(id);
     return this.prisma.account.update({
       where: { id },
-      data: updateAccountDto,
+      data: {
+        ...(updateAccountDto.name && { name: updateAccountDto.name }),
+        ...(updateAccountDto.type && { type: updateAccountDto.type }),
+        ...(updateAccountDto.balance !== undefined && {
+          balance: updateAccountDto.balance,
+        }),
+      },
     });
   }
 

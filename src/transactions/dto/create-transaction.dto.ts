@@ -7,12 +7,9 @@ import {
   IsISO8601,
 } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
+import { TransactionType } from '@prisma/client';
 
-export enum TransactionType {
-  INCOME = 'income',
-  EXPENSE = 'expense',
-  TRANSFER = 'transfer',
-}
+export { TransactionType };
 
 export class CreateTransactionDto {
   @IsString()
